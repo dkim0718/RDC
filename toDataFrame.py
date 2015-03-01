@@ -62,17 +62,19 @@ def jsonToDF(filename):
 #    print(filename, 'Processed:', npeople, "No position:", noposition, "Errors:", nerrors)
     return df
 
-def main():
-    DIR = '/Users/dokim/Documents/archive/'
-    os.chdir(DIR)
-    files = os.listdir(os.getcwd())
-    nfiles = len(files)
+def processFolder(pathname):
+    # Set up main directory
+    os.chdir(pathname)
+    json_files = os.listdir(os.getcwd()) # List of files in a folder
+    outputfilename = '/Users/dokim/Documents/outputfilename.csv'
+
+    # Keep track of how many files we have processed
+    nfiles = len(json_files)
     processed = 0
     output = DataFrame()
-    outputfilename = '/Users/dokim/Documents/outputfilename.csv'
     
-    for filename in files:
-        if processed == 6:
+    for filename in json_files:
+        if processed == 0:
             pass
         temp = jsonToDF(filename)
         # Having such big datasets may be bad for memory; switching to writing as we go instead.
@@ -85,6 +87,9 @@ def main():
         processed += 1
     if processed % 50 == 0:
         return str(processed)+' out of '+str(nfiles)+' processed.'
+
+def main():
+    os.chdir()
 
 #os.chdir('C:/Users/doyoon/Downloads/1340404404/archive')
 if __name__=='__main__':
