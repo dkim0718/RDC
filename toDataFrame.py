@@ -16,7 +16,7 @@ def jsonToDF(filename):
     
     # Columns defines the columns of the resulting dataframe
     columns = ['num-connections', 'last-name', 'first-name', 'industry', 'location', 'public-profile-url']
-    npeople = 0
+    npeople = 0;
     noposition = 0
     nerrors = 0
     df = []
