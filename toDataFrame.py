@@ -4,16 +4,11 @@ Spyder Editor
 
 This is a temporary script file.
 """
-
-import os
-import json
-import pandas as pd
-from pandas import DataFrame
-import csv
+import os, sys, getopt
+import pprint
 
 def jsonToDF(filename):
-    """ This function takes a filename as input and outputs a dataframe """
-    
+    """ Return a DataFrame from the json file, filename """
     # Columns defines the columns of the resulting dataframe
     columns = ['num-connections', 'last-name', 'first-name', 'industry', 'location', 'public-profile-url']
     npeople = 0;
@@ -63,6 +58,11 @@ def jsonToDF(filename):
     return df
 
 def processFolder(pathname):
+    """ Write all json files in pathname to a single csv file """
+    import json
+    import pandas as pd
+    from pandas import DataFrame
+    import csv
     # Set up main directory
     os.chdir(pathname)
     json_files = os.listdir(os.getcwd()) # List of files in a folder
@@ -88,9 +88,40 @@ def processFolder(pathname):
     if processed % 50 == 0:
         return str(processed)+' out of '+str(nfiles)+' processed.'
 
-def main():
-    os.chdir()
+def main(argv):
+    """ Open specified folder and access all subdirectories """
+    # Get input file name
+    inputfile = ''
+    outputfile = ''
+    try:
+        opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+    except getopt.GetoptError:
+        print 'toDataFrame.py -i <inputfile> -o <outputfile>'
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'toDataFrame.py -i <inputfile> -o <outputfile>'
+            sys.exit()
+        elif opt in ("-i", "--ifile"):
+            inputfile = arg
+        elif opt in ("-o", "--ofile"):
+            outputfile = arg
+    print 'Input file is "', inputfile
+    print 'Output file is "', outputfile
+
+    # try to change directory to given folder; otherwise deploy in current folder.
+    try:
+        os.chdir(inputfile )
+    except:
+        print("Non existing directory; running locally instead")
+        print("current directory",os.getcwd())
+
+    # Print all immediate subdirectories
+    folders = [folder for folder in next(os.walk(os.getcwd()))[1]]
+    pprint.pprint(folders)
+    return 
 
 #os.chdir('C:/Users/doyoon/Downloads/1340404404/archive')
 if __name__=='__main__':
-    print main();
+    main(sys.argv[1:]);
