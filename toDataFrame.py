@@ -7,55 +7,55 @@ This is a temporary script file.
 import os, sys, getopt
 import pprint
 
-def jsonToDF(filename):
-    """ Return a DataFrame from the json file, filename """
-    # Columns defines the columns of the resulting dataframe
-    columns = ['num-connections', 'last-name', 'first-name', 'industry', 'location', 'public-profile-url']
-    npeople = 0;
-    noposition = 0
-    nerrors = 0
-    df = []
-    errors = []
-    db = json.load(open(filename))
-    for person in db:
-        npeople += 1
-        # GET ALL POSITIONS
-        try:
-            ppos = DataFrame(person['positions'])        
-        except:
-            # If no position, then move on to next person
-            errors.append(person)
-            noposition += 1
-            continue
+# def jsonToDF(filename):
+#     """ Return a DataFrame from the json file, filename """
+#     # Columns defines the columns of the resulting dataframe
+#     columns = ['num-connections', 'last-name', 'first-name', 'industry', 'location', 'public-profile-url']
+#     npeople = 0;
+#     noposition = 0
+#     nerrors = 0
+#     df = []
+#     errors = []
+#     db = json.load(open(filename))
+#     for person in db:
+#         npeople += 1
+#         # GET ALL POSITIONS
+#         try:
+#             ppos = DataFrame(person['positions'])        
+#         except:
+#             # If no position, then move on to next person
+#             errors.append(person)
+#             noposition += 1
+#             continue
         
-        # GET MOST RECENT EDUCATION
-        try:
-            educ = DataFrame(person['educations'][0],index=[0])
-            if 'start-date' in list(educ):
-                educ = educ.drop('start-date')
-            elif 'end-date' in list(educ):
-                educ=educ.drop('end-date')  
-            ppos = ppos.join(educ)
-        except:
-            nerrors += 1
+#         # GET MOST RECENT EDUCATION
+#         try:
+#             educ = DataFrame(person['educations'][0],index=[0])
+#             if 'start-date' in list(educ):
+#                 educ = educ.drop('start-date')
+#             elif 'end-date' in list(educ):
+#                 educ=educ.drop('end-date')  
+#             ppos = ppos.join(educ)
+#         except:
+#             nerrors += 1
             
-        # GET ALL OTHER VARIABLES
-        for col in columns: 
-            try:
-                ppos[col] = person.get(col,float('nan'))
-            except:
-                nerrors += 1
-        try: 
-            df.append(ppos)
-        except: 
-            continue 
-    try:
-        df = pd.concat(df, ignore_index=True)
-    except:
-        print(filename,"error")
-    # Print for debugginf purposes
-#    print(filename, 'Processed:', npeople, "No position:", noposition, "Errors:", nerrors)
-    return df
+#         # GET ALL OTHER VARIABLES
+#         for col in columns: 
+#             try:
+#                 ppos[col] = person.get(col,float('nan'))
+#             except:
+#                 nerrors += 1
+#         try: 
+#             df.append(ppos)
+#         except: 
+#             continue 
+#     try:
+#         df = pd.concat(df, ignore_index=True)
+#     except:
+#         print(filename,"error")
+#     # Print for debugginf purposes
+# #    print(filename, 'Processed:', npeople, "No position:", noposition, "Errors:", nerrors)
+#     return df
 
 # def processFolder(pathname):
 #     """ Write all json files in pathname to a single csv file """
