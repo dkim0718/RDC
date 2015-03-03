@@ -57,36 +57,36 @@ def jsonToDF(filename):
 #    print(filename, 'Processed:', npeople, "No position:", noposition, "Errors:", nerrors)
     return df
 
-def processFolder(pathname):
-    """ Write all json files in pathname to a single csv file """
-    import json
-    import pandas as pd
-    from pandas import DataFrame
-    import csv
-    # Set up main directory
-    os.chdir(pathname)
-    json_files = os.listdir(os.getcwd()) # List of files in a folder
-    outputfilename = '/Users/dokim/Documents/outputfilename.csv'
+# def processFolder(pathname):
+#     """ Write all json files in pathname to a single csv file """
+#     import json
+#     import pandas as pd
+#     from pandas import DataFrame
+#     import csv
+#     # Set up main directory
+#     os.chdir(pathname)
+#     json_files = os.listdir(os.getcwd()) # List of files in a folder
+#     outputfilename = '/Users/dokim/Documents/outputfilename.csv'
 
-    # Keep track of how many files we have processed
-    nfiles = len(json_files)
-    processed = 0
-    output = DataFrame()
+#     # Keep track of how many files we have processed
+#     nfiles = len(json_files)
+#     processed = 0
+#     output = DataFrame()
     
-    for filename in json_files:
-        if processed == 0:
-            pass
-        temp = jsonToDF(filename)
-        # Having such big datasets may be bad for memory; switching to writing as we go instead.
-        #output = pd.concat([output,temp], ignore_index=True)
+#     for filename in json_files:
+#         if processed == 0:
+#             pass
+#         temp = jsonToDF(filename)
+#         # Having such big datasets may be bad for memory; switching to writing as we go instead.
+#         #output = pd.concat([output,temp], ignore_index=True)
         
-        if processed == 0:
-            temp.to_csv(outputfilename,encoding='utf-8',index=False)
-        else:
-            temp.to_csv(outputfilename,header=False,encoding='utf-8',mode='a',index=False)
-        processed += 1
-    if processed % 50 == 0:
-        return str(processed)+' out of '+str(nfiles)+' processed.'
+#         if processed == 0:
+#             temp.to_csv(outputfilename,encoding='utf-8',index=False)
+#         else:
+#             temp.to_csv(outputfilename,header=False,encoding='utf-8',mode='a',index=False)
+#         processed += 1
+#     if processed % 50 == 0:
+#         return str(processed)+' out of '+str(nfiles)+' processed.'
 
 def main(argv):
     """ Open specified folder and access all subdirectories """
