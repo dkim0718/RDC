@@ -117,8 +117,8 @@ def main(argv):
         print("Non existing directory; running locally instead")
         print("current directory",os.getcwd())
 
-    # Print all immediate subdirectories
-    folders = [folder for folder in next(os.walk(os.getcwd()))[1]]
+    # Print all nonempty subdirectories in our dataset
+    folders = [folder[0] for folder in os.walk(os.getcwd()) if folder[2] != []]
     pprint.pprint(folders)
     return 
 
