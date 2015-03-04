@@ -95,27 +95,33 @@ def main(argv,restart=False):
     input_root_dir = ''
     output_dir = ''
     try:
-        opts, args = getopt.getopt(argv,"hi:o:r:",["ifile=","ofile="])
+        opts, args = getopt.getopt(argv,"hi:o:r:c:",["ifile=","ofile=","restart=","chunk="])
     except getopt.GetoptError:
-        print 'toDataFrame.py -i <inputdir> -o <outputdir> -r <numberrun>'
+        print 'toDataFrame.py -i <inputdir> -o <outputdir> -r <restart?> -c <chunk>'
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print 'toDataFrame.py -i <inputdir> -o <outputdir> -r <numberrun>'
+            print 'toDataFrame.py -i <inputdir> -o <outputdir> -r <restart?> -c <chunk>'
             sys.exit()
         elif opt in ("-i", "--ifile"):
             input_root_dir = arg
         elif opt in ("-o", "--ofile"):
             output_dir = arg
-        elif opt in ("-r"):
+        elif opt in ("-c"):
             try:
                 iteration = int(arg)
             except:
-                print 'argument after -r needs to be number'
+                print 'argument after -c needs to be number'
+        elif opt in ("-r")
+            try:
+                restart = arg == 'True'
+            except:
+                print 'argument after -r needs to be True or False'
     print 'Input folder is "', input_root_dir
     print 'Output folder is "', output_dir
     print 'Chunk to be processed is', iteration
+    print 'Overwrite?', restart
 
     # Try to change directory to input_root_dir; otherwise deploy on grid.
     try:
