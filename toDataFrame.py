@@ -177,7 +177,7 @@ def main(argv,restart=False):
     for fname in jsonfilelist[start_here:-1]:
         curr_ind = jsonfilelist.index(fname)
         logitems['curr_ind'] = curr_ind
-        if (curr_ind % 3) == 0:
+        if (curr_ind % 100) == 0:
             print(fname,curr_ind+1,'of',logitems['nfiles'])
 
         # Sometimes the conversion to json doesn't work because the files are faulty
@@ -186,7 +186,7 @@ def main(argv,restart=False):
         except:
             print('Error while processing! Appending to errors.txt')
             # Print curr_ind, fname, data_path, save to text file
-            with open('errors.txt','a') as f:
+            with open('/export/home/doctoral/dokim/Linkedin/errors.txt','a') as f:
                 e_log = logitems
                 e_log['fname'] = fname
                 e_log['data_path'] = data_path
