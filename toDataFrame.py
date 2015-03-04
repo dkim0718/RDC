@@ -167,7 +167,11 @@ def main(argv,restart=False):
     if restart:
         start_here = 0
     else:
-        start_here = existinglog['curr_ind']
+        # there might or might not be a existinglog variable
+        try:
+            start_here = existinglog['curr_ind']
+        except:
+            start_here = 0
 
     # For each file in the folder, proess our file
     for fname in jsonfilelist[start_here:-1]:
