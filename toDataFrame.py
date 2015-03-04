@@ -84,7 +84,13 @@ def writeDF(data,output_dir,logitems):
 
     
 def main(argv,restart=False):
-    """ Open specified folder and access all subdirectories """
+    """ Open specified folder and access all subdirectories 
+
+    Keyword arguments:
+    argv -- statements of the form '-i <inputdir> -o <outputdir> -r <numberrun>' Defaults to '/export/home/doctoral/dokim/Linkedin/Data' for -i and '/export/home/doctoral/dokim/Linkedin/Output' for -o.
+    restart -- Boolean denoting whether to restart the whole process
+
+    """
     # Process user arguments
     input_root_dir = ''
     output_dir = ''
