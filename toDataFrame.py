@@ -158,7 +158,7 @@ def main(argv,restart=False):
     logitems = {
         'nfiles':len(jsonfilelist),
         'logfilename':data_path.split('Data/')[-1].split('/')[0],
-        'curr_time':datetime.datetime.now(),
+        'curr_time':str(datetime.datetime.now()),
         'curr_ind':0
         }
 
