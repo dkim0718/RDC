@@ -189,6 +189,9 @@ def main(argv,restart=False):
         # Sometimes the conversion to json doesn't work because the files are faulty
         try:
             df = jsonToDF(fname)
+            
+            # Write df to output_dir, log results.
+            writeDF(df,output_dir,logitems)
         except:
             print('Error while processing! Appending to errors.txt')
             # Print curr_ind, fname, data_path, save to text file
@@ -197,10 +200,8 @@ def main(argv,restart=False):
                 e_log['fname'] = fname
                 e_log['data_path'] = data_path
                 json.dump(logitems,f,encoding='utf-8')
-            break
+            continue
 
-        # Write df to output_dir, log results.
-        writeDF(df,output_dir,logitems)
     return 
 
 #os.chdir('C:/Users/doyoon/Downloads/1340404404/archive')
