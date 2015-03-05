@@ -113,7 +113,7 @@ def main(argv,restart=False):
                 iteration = int(arg)
             except:
                 print 'argument after -c needs to be number'
-        elif opt in ("-r")
+        elif opt in ("-r"):
             try:
                 restart = arg == 'True'
             except:
@@ -197,6 +197,7 @@ def main(argv,restart=False):
                 e_log['fname'] = fname
                 e_log['data_path'] = data_path
                 json.dump(logitems,f,encoding='utf-8')
+            break
 
         # Write df to output_dir, log results.
         writeDF(df,output_dir,logitems)

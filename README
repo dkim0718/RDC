@@ -1,1 +1,11 @@
-This project will analyze LinkedIn Data for RDC. Branching out!
+This project will analyze LinkedIn Data for RDC.
+
+toDataFrame.py : Converts existing files in Data and places it into Output.
+
+toDataFrame.py -i <inputdir> -o <outputdir> -r <restart?> -c <chunk>
+<inputdir>  : defaults to '/export/home/doctoral/dokim/Linkedin/Data'
+<outputdir> : defaults to '/export/home/doctoral/dokim/Linkedin/Output'
+<restart>   : defaults to 'False'
+<chunk>	    : no default; must input number from 1 to 53.
+
+
