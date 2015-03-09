@@ -11,21 +11,20 @@ def jsonToDF(filename):
     """ Return a DataFrame constructed from filename """
     # Columns defines the columns of the resulting dataframe
     columns = ['num-connections', 'last-name', 'first-name', 'industry', 'location', 'public-profile-url']
-    npeople = 0;
-    noposition = 0
-    nerrors = 0
-    df = []
-    errors = []
+    df = [] # List of people 
     db = json.load(open(filename))
     for person in db:
-        npeople += 1
         # GET ALL POSITIONS
         try:
-            ppos = DataFrame(person['positions'])        
+            ppos = DataFrame(person['positions'])
+            
+            # List of all columns required
+            order = [u'company-name', u'title', u'start-date', u'end-date', u'summary', u'is-current']
+
+            # If certain columns do not exist, append empty columns
+            ppos = ppos.append(DataFrame(columns=order))
         except:
             # If no position, then move on to next person
-            errors.append(person)
-            noposition += 1
             continue
         
         # GET MOST RECENT EDUCATION
@@ -37,24 +36,30 @@ def jsonToDF(filename):
                 educ=educ.drop('end-date')  
             ppos = ppos.join(educ)
         except:
-            nerrors += 1
+            # No education; do nothing and continue to get other variables
+            pass
             
         # GET ALL OTHER VARIABLES
         for col in columns: 
             try:
+                # Add each of 
                 ppos[col] = person.get(col,float('nan'))
             except:
-                nerrors += 1
+                # In case the statement above fails, do nothing, continue to add onto df
+                pass
+
+        # APPEND TO LIST OF PEOPLE TO TURN INTO DATA FRAME
         try: 
-            df.append(ppos)
-        except: 
+            df = df.append(ppos)
+        except:
+            # If everything is empty, continue to next person 
             continue 
+
+    # TURN THE LIST OF PEOPLE INTO A SINGLE DATAFRAME
     try:
         df = pd.concat(df, ignore_index=True)
     except:
         print(filename,"error")
-    # Print for debugginf purposes
-#    print(filename, 'Processed:', npeople, "No position:", noposition, "Errors:", nerrors)
     return df
 
 def writeDF(data,output_dir,logitems):
@@ -158,7 +163,7 @@ def main(argv,restart=False):
     logitems = {
         'nfiles':len(jsonfilelist),
         'logfilename':data_path.split('Data/')[-1].split('/')[0],
-        'curr_time':datetime.datetime.now(),
+        'curr_time':str(datetime.datetime.now()),
         'curr_ind':0
         }
 
@@ -195,7 +200,9 @@ def main(argv,restart=False):
         except:
             print('Error while processing! Appending to errors.txt')
             # Print curr_ind, fname, data_path, save to text file
-            with open('/export/home/doctoral/dokim/Linkedin/errors.txt','a') as f:
+            #errorfile = '/export/home/doctoral/dokim/Linkedin/errors.txt'
+            errorfile = output_dir + '/errors.txt'
+            with open(errorfile,'a') as f:
                 e_log = logitems
                 e_log['fname'] = fname
                 e_log['data_path'] = data_path
@@ -208,8 +215,6 @@ def main(argv,restart=False):
 if __name__=='__main__':
     import time
     t0 = time.time()
-    # # Uncomment below to restart; otherwise start where we last finished.
-    # main(sys.argv[1:],True);
     main(sys.argv[1:]);
     t1 = time.time()
     print(t1-t0)
