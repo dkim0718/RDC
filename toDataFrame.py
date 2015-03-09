@@ -50,7 +50,7 @@ def jsonToDF(filename):
 
         # APPEND TO LIST OF PEOPLE TO TURN INTO DATA FRAME
         try: 
-            df = df.append(ppos)
+            df.append(ppos)
         except:
             # If everything is empty, continue to next person 
             continue 
@@ -200,8 +200,9 @@ def main(argv,restart=False):
         except:
             print('Error while processing! Appending to errors.txt')
             # Print curr_ind, fname, data_path, save to text file
-            #errorfile = '/export/home/doctoral/dokim/Linkedin/errors.txt'
-            errorfile = output_dir + '/errors.txt'
+            errorfile = '/export/home/doctoral/dokim/Linkedin/errors.txt'
+            # This is for testing locally.
+            # errorfile = output_dir + '/errors.txt'
             with open(errorfile,'a') as f:
                 e_log = logitems
                 e_log['fname'] = fname
