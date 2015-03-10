@@ -10,7 +10,7 @@ from pandas import DataFrame
 def jsonToDF(filename):
     """ Return a DataFrame constructed from filename """
     # Columns defines the columns of the resulting dataframe
-    columns = ['num-connections', 'last-name', 'first-name', 'industry', 'location', 'public-profile-url']
+    columns = [u'num-connections', u'last-name', u'first-name', u'industry', u'location', u'public-profile-url']
     df = [] # List of people 
     db = json.load(open(filename))
     for person in db:
@@ -26,18 +26,25 @@ def jsonToDF(filename):
         except:
             # If no position, then move on to next person
             continue
-        
-        # GET MOST RECENT EDUCATION
-        try:
-            educ = DataFrame(person['educations'][0],index=[0])
-            if 'start-date' in list(educ):
-                educ = educ.drop('start-date')
-            elif 'end-date' in list(educ):
-                educ=educ.drop('end-date')  
-            ppos = ppos.join(educ)
-        except:
-            # No education; do nothing and continue to get other variables
-            pass
+        ################################################
+        # Eduction is messed up; don't run this part
+        ################################################
+        # # GET MOST RECENT EDUCATION
+        # try:
+        #     # educ contains 'school-name', 'degree', 'field-of-study'
+        #     educ = DataFrame(person['educations'][0],index=[0])
+        #     if 'start-date' in list(educ):
+        #         educ = educ.drop('start-date')
+        #     elif 'end-date' in list(educ):
+        #         educ=educ.drop('end-date')  
+        #     ppos = ppos.join(educ)
+        # except:
+        #     # No education; do nothing and continue to get other variables
+        #     pass
+        # finally:
+        #     # add stuff if missing 
+        #     educ_order = [u'school-name', u'degree', u'field-of-study']
+        #     ppos = ppos.append(DataFrame(columns=educ_order))
             
         # GET ALL OTHER VARIABLES
         for col in columns: 
