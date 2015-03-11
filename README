@@ -8,4 +8,6 @@ toDataFrame.py -i <inputdir> -o <outputdir> -r <restart?> -c <chunk>
 <restart>   : defaults to 'False'
 <chunk>	    : no default; must input number from 1 to 53.
 
-
+3/11/2015 v1.0
+First working version! 
+    - To Do: Adjust getFileList function to allow for processing just the error files.

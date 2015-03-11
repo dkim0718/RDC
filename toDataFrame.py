@@ -67,6 +67,8 @@ def jsonToDF(filename):
         df = pd.concat(df, ignore_index=True)
     except:
         print(filename,"error")
+
+    #print(list(df))
     return df
 
 def writeDF(data,output_dir,logitems):
@@ -83,9 +85,11 @@ def writeDF(data,output_dir,logitems):
         with open(logfilename + '.log','r') as f:
             existinglog = json.load(f,encoding='utf-8')
 
+    f = logfilename+'.csv'
+
     # Write DATA to OUTPUT_DIR
-    with open(logfilename+'.csv','a') as f:
-        data.to_csv(f,encoding='utf-8',index=False,header=False,mode='a')
+    all_cols = [u'company-name',u'end-date',u'first-name',u'industry',u'is-current',u'last-name',u'location',u'num-connections',u'public-profile-url',u'start-date',u'summary',u'title']
+    data.to_csv(f,encoding='utf-8',index=False,columns=all_cols,header=False,mode='a')
 
     # Update logitems
     logitems['curr_time'] = str(datetime.datetime.now())
@@ -94,14 +98,11 @@ def writeDF(data,output_dir,logitems):
     with open(logfilename + '.log','w+') as f:
         json.dump(logitems,f,encoding='utf-8')
 
+def inputSequence(argv):
+    """ Process user arguments and return input directory and output directory
     
-def main(argv,restart=False):
-    """ Open specified folder and access all subdirectories 
-
     Keyword arguments:
-    argv -- statements of the form '-i <inputdir> -o <outputdir> -r <numberrun>' Defaults to '/export/home/doctoral/dokim/Linkedin/Data' for -i and '/export/home/doctoral/dokim/Linkedin/Output' for -o.
-    restart -- Boolean denoting whether to restart the whole process
-
+    argv -- command line arguments passed by user
     """
     # Process user arguments
     input_root_dir = ''
@@ -129,6 +130,7 @@ def main(argv,restart=False):
             try:
                 restart = arg == 'True'
             except:
+                restart = False
                 print 'argument after -r needs to be True or False'
     print 'Input folder is "', input_root_dir
     print 'Output folder is "', output_dir
@@ -141,27 +143,36 @@ def main(argv,restart=False):
     except:
         #Non existing directory; Seems to be running on grid
         os.chdir('/export/home/doctoral/dokim/Linkedin/Data')
+        print("Invalid input for -i; Using /export/home/doctoral/dokim/Linkedin/Data instead")
         input_root_dir = os.getcwd()
 
     # Notify whether output_dir exists
     if not(os.path.exists(output_dir)):
-        print("Invalid output for -o; Saving to /export/home/doctoral/dokim/Linkedin/Output instead")
+        print("Invalid input for -o; Saving to /export/home/doctoral/dokim/Linkedin/Output instead")
         output_dir = '/export/home/doctoral/dokim/Linkedin/Output'
-    print('\n')
+    print('')
+    return (input_root_dir, output_dir, iteration, restart)
 
-    # Get a list of folders to process (folders with json files in them) within input_root_dir
+def getFileList(input_root_dir, output_dir, iteration, restart):
+    # LOCAL VARIABLES
+    # folders_to_process - all subdirectories of input_root_dir that contain json files
+    # data_path - Subdirectory with all json files given the iteration number
+    # jsonfilelist - List of all json files in data_path
+
+    # Get subdirectory of json files specifed by iteration number
     folders_to_process = [item[0] for item in os.walk(input_root_dir) if item[2] != []] 
-    print 'Trying to chdir to',folders_to_process[iteration]
+    print 'Trying to chdir to',folders_to_process[iteration]    
     try:
         os.chdir(folders_to_process[iteration])
+        
         data_path = os.getcwd()
         print 'Current directory is',os.getcwd()
     except:
         print('Index invalid! Enter a number less than ',len(folders_to_process)-1)
         sys.exit(2)
-    print('\n')
+    print('')
 
-    # Get a list of all the json files to be processed
+    # Create list of all json files 
     jsonfilelist = os.listdir(data_path)
     jsonfilelist = [f for f in jsonfilelist if f.split('.')[-1] == 'json']
     print('There are',len(jsonfilelist),'files in',data_path)
@@ -181,6 +192,7 @@ def main(argv,restart=False):
             existinglog = json.load(f,encoding='utf-8')
         print('Previously finished up to',existinglog['curr_ind'],existinglog['curr_time'])
 
+    # TODO: GET SUBLIST OF JSONFILE TO PROCESS AND RETURN THAT
     # Change where to start
     if restart:
         start_here = 0
@@ -190,13 +202,37 @@ def main(argv,restart=False):
             start_here = existinglog['curr_ind']
         except:
             start_here = 0
+    return jsonfilelist, start_here, logitems, logfilename, data_path
+    
+def main(argv):
+    """ Open specified folder and access all subdirectories 
+
+    Keyword arguments:
+    argv -- statements of the form '-i <inputdir> -o <outputdir> -r <numberrun>' Defaults to '/export/home/doctoral/dokim/Linkedin/Data' for -i and '/export/home/doctoral/dokim/Linkedin/Output' for -o.
+    restart -- Boolean denoting whether to restart the whole process
+
+    """
+    # Get input and output directories
+    (input_root_dir, output_dir, iteration, restart) = inputSequence(argv)
+
+    # Get a list of folders to process (folders with json files in them) within input_root_dir
+    (jsonfilelist, start_here, logitems, logfilename, data_path) = getFileList(input_root_dir,output_dir,iteration,restart)
 
     # For each file in the folder, proess our file
-    for fname in jsonfilelist[start_here:-1]:
-        curr_ind = jsonfilelist.index(fname)
-        logitems['curr_ind'] = curr_ind
-        if (curr_ind % 100) == 0:
-            print(fname,curr_ind+1,'of',logitems['nfiles'])
+    for i, fname in enumerate(jsonfilelist[start_here:]):
+        logitems['curr_ind'] = i
+        if (i % 100) == 0:
+            print(fname,i+1,'of',logitems['nfiles'])
+
+        # Delete file if first time
+        if i == 0:
+            print("Processing first file;")
+            try: 
+                f = logfilename+'.csv'
+                os.remove(f)
+                print('Existing file found! Removing.')
+            except:
+                pass
 
         # Sometimes the conversion to json doesn't work because the files are faulty
         try:
@@ -216,7 +252,7 @@ def main(argv,restart=False):
                 e_log['data_path'] = data_path
                 json.dump(logitems,f,encoding='utf-8')
             continue
-
+    print(fname, jsonfilelist[-1])
     return 
 
 #os.chdir('C:/Users/doyoon/Downloads/1340404404/archive')
